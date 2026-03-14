@@ -1,3 +1,27 @@
+Commons Clause License Condition v1.0
+
+The Software is provided to you by the Licensor under the License, as
+defined below, subject to the following condition.
+
+Without limiting other conditions in the License, the grant of rights
+under the License will not include, and the License does not grant to
+you, the right to Sell the Software.
+
+For purposes of the foregoing, "Sell" means practicing any or all of
+the rights granted to you under the License to provide to third parties,
+for a fee or other consideration (including without limitation fees for
+hosting or consulting/support services related to the Software), a
+product or service whose value derives, entirely or substantially, from
+the functionality of the Software. Any license notice or attribution
+required by the License must also include this Commons Clause License
+Condition notice.
+
+Software: Cosmic Timeline
+License: MIT
+Licensor: digitalghost404
+
+---
+
 MIT License
 
 Copyright (c) 2026 digitalghost404
@@ -19,25 +43,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
-(CC BY-NC-SA 4.0)
-
-The creative content of this project — including but not limited to visual
-designs, shader effects, narration scripts, audio compositions, and the
-overall artistic presentation — is licensed under CC BY-NC-SA 4.0.
-
-You are free to:
-  - Share — copy and redistribute the material in any medium or format
-  - Adapt — remix, transform, and build upon the material
-
-Under the following terms:
-  - Attribution — You must give appropriate credit, provide a link to the
-    license, and indicate if changes were made.
-  - NonCommercial — You may not use the material for commercial purposes.
-  - ShareAlike — If you remix, transform, or build upon the material, you
-    must distribute your contributions under the same license.
-
-Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
