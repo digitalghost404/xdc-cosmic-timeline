@@ -156,4 +156,6 @@ src/
 
 ## License
 
-MIT
+**Code**: [MIT License](LICENSE) — use, modify, and distribute the source freely.
+
+**Creative content** (visuals, shaders, narration, audio, artistic presentation): [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — share and adapt, but not for commercial use.
