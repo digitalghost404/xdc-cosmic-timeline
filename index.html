@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmic Timeline — 13.8 Billion Years</title>
+  <link rel="stylesheet" href="/src/styles/main.css" />
+  <script>
+    // Reset scroll before anything renders — must run synchronously in <head>
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  </script>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div id="scroll-spacer"></div>
+  <div id="ui-overlay"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

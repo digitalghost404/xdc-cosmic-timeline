@@ -1,0 +1,20 @@
+{
+  "name": "cosmic-timeline",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "0.183.2",
+    "gsap": "3.14.2"
+  },
+  "devDependencies": {
+    "@types/three": "0.183.1",
+    "typescript": "5.9.3",
+    "vite": "8.0.0",
+    "vite-plugin-glsl": "1.5.6"
+  }
+}

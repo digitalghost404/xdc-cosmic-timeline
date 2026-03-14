@@ -1,0 +1,709 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  background: #000;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #fff;
+  background: #000;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#scroll-spacer {
+  position: relative;
+  width: 100%;
+  height: 60000px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#ui-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#ui-overlay * {
+  pointer-events: auto;
+}
+
+/* Loading screen */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 1.2s ease-out;
+}
+
+.loading-screen__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.loading-screen__title {
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  font-weight: 200;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1rem;
+}
+
+.loading-screen__subtitle {
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.35);
+  margin-bottom: 2rem;
+}
+
+.loading-screen__track {
+  width: min(300px, 60vw);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.loading-screen__bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #FFE833, #FF8800);
+  border-radius: 1px;
+  transition: width 0.3s ease-out;
+}
+
+.loading-screen__label {
+  display: block;
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  font-weight: 300;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Era footer — solid bar pinned to bottom */
+.era-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.75) 80%, transparent 100%);
+  padding: 1.4rem 2rem 1.2rem;
+  pointer-events: none;
+}
+
+.era-footer__inner {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.era-footer__time {
+  display: block;
+  font-size: clamp(0.55rem, 1vw, 0.7rem);
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.35rem;
+}
+
+.era-footer__name {
+  font-size: clamp(1.1rem, 3vw, 2rem);
+  font-weight: 200;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 0.3rem;
+}
+
+.era-footer__fact {
+  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+/* Text crossfade on era change */
+.era-footer--entering .era-footer__inner {
+  animation: eraTextFadeIn 0.6s ease-out;
+}
+
+@keyframes eraTextFadeIn {
+  0% { opacity: 0; transform: translateY(6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Timeline bar */
+.timeline-bar {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60vh;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.timeline-bar.visible {
+  opacity: 1;
+}
+
+.timeline-bar__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+  border-radius: 2px;
+  transition: height 0.1s linear;
+}
+
+.timeline-bar__marker {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-bar__marker.active {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+/* Scroll hint — above the footer */
+.scroll-hint {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 20;
+  opacity: 0;
+  animation: fadeInHint 2s 3s forwards;
+}
+
+.scroll-hint__text {
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.scroll-hint__arrow {
+  width: 16px;
+  height: 16px;
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  transform: rotate(45deg);
+  animation: bounceArrow 2s infinite;
+}
+
+@keyframes fadeInHint {
+  to { opacity: 1; }
+}
+
+@keyframes bounceArrow {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(4px); }
+}
+
+/* Controls bar — sits above the footer */
+.controls-bar {
+  position: fixed;
+  bottom: 90px;
+  right: 24px;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.55);
+  font-family: inherit;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+  outline: none;
+}
+
+.control-btn:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.control-btn:focus-visible {
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+.control-btn__icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.control-btn__label {
+  line-height: 1;
+}
+
+/* Mute button */
+.mute-btn { padding: 8px; }
+
+.control-btn__icon--muted { display: none; }
+.mute-btn.muted .control-btn__icon--unmuted { display: none; }
+.mute-btn.muted .control-btn__icon--muted { display: block; }
+.mute-btn.muted {
+  border-color: rgba(255, 100, 100, 0.25);
+  color: rgba(255, 100, 100, 0.7);
+}
+
+/* Autoplay button */
+.control-btn__icon--pause { display: none; }
+.autoplay-btn.playing .control-btn__icon--play { display: none; }
+.autoplay-btn.playing .control-btn__icon--pause { display: block; }
+.autoplay-btn.playing {
+  border-color: rgba(255, 200, 100, 0.25);
+  color: rgba(255, 200, 100, 0.8);
+}
+
+/* Screenshot button */
+.screenshot-btn {
+  padding: 8px;
+}
+
+.screenshot-btn.flash {
+  border-color: rgba(100, 200, 255, 0.5) !important;
+  color: rgba(100, 200, 255, 0.9) !important;
+  animation: screenshotFlash 0.6s ease-out forwards;
+}
+
+@keyframes screenshotFlash {
+  0% {
+    border-color: rgba(100, 200, 255, 0.8);
+    color: rgba(100, 200, 255, 1);
+    box-shadow: 0 0 12px rgba(100, 200, 255, 0.4);
+  }
+  100% {
+    border-color: rgba(100, 200, 255, 0.5);
+    color: rgba(100, 200, 255, 0.9);
+    box-shadow: none;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Cosmic HUD — temperature, density, age readout (top-left)
+   ------------------------------------------------------------------------- */
+
+.cosmic-hud {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 20;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  pointer-events: none;
+}
+
+.cosmic-hud__row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.cosmic-hud__label {
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.cosmic-hud__value {
+  font-size: 0.75rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s;
+}
+
+.cosmic-hud__value sup {
+  font-size: 0.55rem;
+}
+
+/* -------------------------------------------------------------------------
+   Scale Overlay — centred visceral comparisons
+   ------------------------------------------------------------------------- */
+
+.scale-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 18;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.scale-overlay.visible {
+  opacity: 1;
+}
+
+.scale-overlay__text {
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  font-weight: 200;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  max-width: 500px;
+  margin: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Milestone Markers — small bottom-left flash labels
+   ------------------------------------------------------------------------- */
+
+.milestone {
+  position: fixed;
+  bottom: 100px;
+  left: 24px;
+  z-index: 19;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.milestone.visible {
+  opacity: 1;
+}
+
+.milestone__text {
+  font-size: 0.7rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.06em;
+  border-left: 2px solid rgba(255, 255, 255, 0.15);
+  padding-left: 8px;
+}
+
+/* Special "You are here" milestone */
+.milestone--special .milestone__text {
+  font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+  font-weight: 200;
+  color: rgba(255, 255, 255, 0.8);
+  border-left-color: rgba(255, 255, 255, 0.4);
+  animation: milestoneSpecialPulse 2s ease-in-out infinite;
+}
+
+@keyframes milestoneSpecialPulse {
+  0%, 100% { color: rgba(255, 255, 255, 0.8); border-left-color: rgba(255, 255, 255, 0.4); }
+  50%       { color: rgba(255, 255, 255, 1.0); border-left-color: rgba(255, 255, 255, 0.7); }
+}
+
+/* -------------------------------------------------------------------------
+   Dedication Text — the closing emotional moment
+   ------------------------------------------------------------------------- */
+
+.dedication {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 22;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.dedication.visible {
+  opacity: 1;
+}
+
+.dedication__text {
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+  font-weight: 200;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.08em;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.dedication__text--sub {
+  font-size: clamp(0.85rem, 2vw, 1.3rem);
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.12em;
+  animation: dedicationSubPulse 4s ease-in-out infinite;
+}
+
+@keyframes dedicationSubPulse {
+  0%, 100% { opacity: 0.75; }
+  50%       { opacity: 1.0; }
+}
+
+/* -------------------------------------------------------------------------
+   Speed Selector — appears above controls when autoplay is active
+   ------------------------------------------------------------------------- */
+
+.speed-selector {
+  display: none; /* hidden by default */
+  position: fixed;
+  bottom: 130px; /* stacked above the controls bar */
+  right: 24px;
+  z-index: 25;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.speed-selector.visible {
+  display: flex;
+}
+
+.speed-btn {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.5);
+  font-family: inherit;
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speed-btn:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.speed-btn:focus-visible {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.12);
+}
+
+.speed-btn.active {
+  border-color: rgba(255, 200, 100, 0.4);
+  color: rgba(255, 200, 100, 0.9);
+}
+
+/* -------------------------------------------------------------------------
+   Timeline Bar — jump-to-era tooltips
+   ------------------------------------------------------------------------- */
+
+.timeline-bar__marker {
+  cursor: pointer;
+  position: relative;
+}
+
+.timeline-bar__tooltip {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 3px 7px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.timeline-bar__marker:hover .timeline-bar__tooltip {
+  opacity: 1;
+}
+
+/* -------------------------------------------------------------------------
+   Cinema Mode — hide all UI chrome for a pure, immersive experience (press F)
+   ------------------------------------------------------------------------- */
+
+/* Era footer fades to near-invisible; reappears on hover */
+.cinema-mode .era-footer {
+  opacity: 0.08 !important;
+  transition: opacity 1s ease;
+}
+
+.cinema-mode .era-footer:hover {
+  opacity: 0.5;
+}
+
+/* All HUD / navigation elements vanish */
+.cinema-mode .controls-bar,
+.cinema-mode .timeline-bar,
+.cinema-mode .cosmic-hud,
+.cinema-mode .scroll-hint,
+.cinema-mode .speed-selector,
+.cinema-mode .milestone,
+.cinema-mode .scale-overlay {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.8s ease;
+}
+
+/* Dedication and "you are here" text remain fully visible in cinema mode */
+.cinema-mode .dedication {
+  /* intentionally left unmodified — the emotional climax deserves full presence */
+}
+
+/* Brief centred hint shown when cinema mode activates */
+.cinema-hint {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: cinemaHintFade 3s ease forwards;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@keyframes cinemaHintFade {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .timeline-bar {
+    right: 12px;
+    height: 40vh;
+  }
+
+  .era-footer {
+    padding: 1rem 1.2rem 0.8rem;
+  }
+
+  .controls-bar {
+    bottom: 80px;
+    right: 12px;
+  }
+
+  .control-btn__label {
+    display: none;
+  }
+
+  .control-btn__icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .scroll-hint {
+    bottom: 85px;
+  }
+
+  /* Narrative HUD — compact on mobile */
+  .cosmic-hud {
+    top: 12px;
+    left: 12px;
+  }
+
+  .cosmic-hud__label {
+    font-size: 0.5rem;
+  }
+
+  .cosmic-hud__value {
+    font-size: 0.65rem;
+  }
+
+  .milestone {
+    bottom: 90px;
+    left: 12px;
+  }
+
+  .scale-overlay__text {
+    max-width: 85vw;
+  }
+
+  .dedication__text {
+    max-width: 90vw;
+  }
+}
