@@ -1,0 +1,12 @@
+node_modules/
+dist/
+build/
+.next/
+out/
+coverage/
+*.lock
+*.log
+.env.local
+.env.*.local
+.turbo/
+.cache/
