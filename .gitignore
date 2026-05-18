@@ -33,3 +33,4 @@ Desktop.ini
 
 # Claude Code
 .claude/
+__pycache__/
